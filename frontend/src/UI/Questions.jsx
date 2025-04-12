@@ -10,15 +10,21 @@ const Questions = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/");
-        setQuestions(response.data);
+        const response = await fetch("http://localhost:8000/");
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setQuestions(data);
       } catch (err) {
         setError(err.message || "Error fetching questions");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchQuestions();
   }, []);
 
