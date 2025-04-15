@@ -1,0 +1,18 @@
+{%extends "base.html"%}
+    {%block content%}
+    <h1>Вопрос {{q_id}}</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить</button>
+    </form>
+    {% if q_id > 1%}
+        <a href = "{% url 'qwsts' t_id last %}">Перейти к предыдущему вопросу</a>
+    {% endif %}
+    {% if q_id < last_q_id %}
+    <a href = "{% url 'qwsts' t_id next %}">Перейти к следующему вопросу</a>
+    {% else %}
+    <a href = "{% url 'home' %}">Завершить тест</a>
+    {% endif %}
+
+    {%endblock%}
