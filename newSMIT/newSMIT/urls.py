@@ -23,16 +23,17 @@ from backend_api.views import (UserProgressSerializerViewSet, UserPassesSerializ
                                WeightSerializerViewSet, ListProfSerializerViewSet)
 
 router = DefaultRouter()
-router.register(r'items', UserProgressSerializerViewSet)
-router.register(r'items', UserPassesSerializerViewSet)
-router.register(r'items', TestAnswersSerializerViewSet)
-router.register(r'items', QuestionsSerializerViewSet)
-router.register(r'items', WeightSerializerViewSet)
-router.register(r'items', ListProfSerializerViewSet)
+router.register(r'user-progress', UserProgressSerializerViewSet)
+router.register(r'user-passes', UserPassesSerializerViewSet)
+router.register(r'test-answers', TestAnswersSerializerViewSet)
+router.register(r'questions', QuestionsSerializerViewSet)
+router.register(r'weight', WeightSerializerViewSet)
+router.register(r'list-prof', ListProfSerializerViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include(router.urls)),  # Теперь API будет доступен по /api/
     path('', include('TestForAbit.urls')),
-    path('', include(router.urls)),  # /api
-
 ]
+

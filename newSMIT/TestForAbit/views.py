@@ -18,13 +18,16 @@ def start_test_session(request):
         'created_at': new_session.created_at
     })
 
-
 @api_view(['GET'])
-def get_question(request, session_id, t_id, q_id):
+def get_question(request, t_id, q_id):
+    session_id = request.headers.get('X-Session-Id')
+    if not session_id:
+        return Response({"error": "Session ID required"}, status=400)
+
     try:
         session = TestSession.objects.get(session_id=session_id)
     except TestSession.DoesNotExist:
-        return Response({'error': 'Invalid session'}, status=400)
+        return Response({"error": "Invalid session"}, status=400)
 
     # Получаем вопрос из базы данных
     question = get_object_or_404(Questions, id_test=t_id, id_ques=q_id)
@@ -59,61 +62,3 @@ def get_question(request, session_id, t_id, q_id):
 
     return Response(response_data)
 
-''' 
-@api_view(['GET', 'POST'])
-def question_detail(request, t_id, q_id):
-    # Получаем вопрос из модели Questions
-    question = get_object_or_404(Questions, id_test=t_id, id_ques=q_id)
-
-    # Получаем варианты ответов из TestAnswers
-    answer_options = TestAnswers.objects.filter(
-        id_test=t_id,
-        id_ques=q_id
-    ).order_by('id_answ')
-
-    # Сериализуем данные
-    question_data = {
-        'question': QuestionSerializer(question).data,
-        'options': AnswerOptionSerializer(answer_options, many=True).data
-    }
-
-    if request.method == 'GET':
-        # Логика для получения текущего ответа пользователя
-        try:
-            user_answer = TestAnswers.objects.get(
-                id_test=t_id,
-                id_ques=q_id,
-                user=request.user if request.user.is_authenticated else None
-            )
-            question_data['current_answer'] = user_answer.answer_text
-        except TestAnswers.DoesNotExist:
-            question_data['current_answer'] = ''
-
-        # Информация для навигации
-        total_questions = Questions.objects.filter(id_test=t_id).count()
-        question_data['navigation'] = {
-            'next': q_id + 1 if q_id < total_questions else None,
-            'previous': q_id - 1 if q_id > 1 else None,
-            'total': total_questions
-        }
-
-        return Response(question_data)
-
-    elif request.method == 'POST':
-        # Обработка сохранения ответа
-        serializer = AnswerOptionSerializer(data=request.data)
-        if serializer.is_valid():
-            # Сохраняем или обновляем ответ
-            answer, created = TestAnswers.objects.update_or_create(
-                id_test=t_id,
-                id_ques=q_id,
-                user=request.user if request.user.is_authenticated else None,
-                defaults={
-                    'answer_text': serializer.validated_data['answer_text'],
-                    'id_weights': serializer.validated_data.get('id_weights', 1),
-                    'id_group': serializer.validated_data.get('id_group', 1)
-                }
-            )
-            return Response({'status': 'Answer saved'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-'''
