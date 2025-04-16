@@ -18,7 +18,9 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 from rest_framework.routers import DefaultRouter
-from backend_api.views import UserProgressSerializerViewSet, UserPassesSerializerViewSet, TestAnswersSerializerViewSet, QuestionsSerializerViewSet, WeightSerializerViewSet, ListProfSerializerViewSet
+from backend_api.views import (UserProgressSerializerViewSet, UserPassesSerializerViewSet,
+                               TestAnswersSerializerViewSet, QuestionsSerializerViewSet,
+                               WeightSerializerViewSet, ListProfSerializerViewSet)
 
 router = DefaultRouter()
 router.register(r'items', UserProgressSerializerViewSet)

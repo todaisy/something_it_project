@@ -11,8 +11,5 @@
     {% endif %}
     {% if q_id < last_q_id %}
     <a href = "{% url 'qwsts' t_id next %}">Перейти к следующему вопросу</a>
-    {% else %}
-    <a href = "{% url 'home' %}">Завершить тест</a>
     {% endif %}
-
     {%endblock%}
