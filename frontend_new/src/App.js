@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import TestInterface from './TestInterface';
+import { useParams } from 'react-router-dom';
 
 function App() {
-    const [sessionId, setSessionId] = useState(
-        localStorage.getItem('test_session') || null
-    );
+    const { testId } = useParams(); // Получаем testId из URL
+    const [sessionId, setSessionId] = useState(localStorage.getItem('test_session') || null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    // ID теста можно получать через пропсы или роутер
-    const testId = 1;
 
     useEffect(() => {
         const initializeSession = async () => {
             try {
                 if (!sessionId) {
                     // Создаем новую сессию
-                    const response = await axios.post('/api/start-session/');
+                    const response = await axios.post('http://127.0.0.1:8000/api/start-session/');
                     const newSessionId = response.data.session_id;
 
                     localStorage.setItem('test_session', newSessionId);
@@ -31,7 +28,7 @@ function App() {
         };
 
         initializeSession();
-    }, []);
+    }, [sessionId]);
 
     if (loading) {
         return <div>Инициализация теста...</div>;
@@ -50,6 +47,7 @@ function App() {
     return (
         <div className="App">
             <h1>Система тестирования</h1>
+            {/* Передаем оба пропса: */}
             <TestInterface
                 sessionId={sessionId}
                 testId={testId}

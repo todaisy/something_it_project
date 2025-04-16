@@ -40,8 +40,11 @@ const TestInterface = ({ sessionId, testId }) => {
     const handleAnswerSubmit = async (e) => {
         e.preventDefault();
         try {
+            const response = await axios.post('http://localhost:8000/api/start-session/');
             await axios.post(
                 `http://localhost:8000/api/save-answer/${testId}/${currentQues}/`,
+
+
                 {
                     answer_text: selectedAnswer,
                     session_id: sessionId
