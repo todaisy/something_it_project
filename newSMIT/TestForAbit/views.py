@@ -20,7 +20,12 @@ def start_test_session(request):
 
 
 @api_view(['GET'])
-def get_question(request, t_id, q_id):
+def get_question(request, session_id, t_id, q_id):
+    try:
+        session = TestSession.objects.get(session_id=session_id)
+    except TestSession.DoesNotExist:
+        return Response({'error': 'Invalid session'}, status=400)
+
     # Получаем вопрос из базы данных
     question = get_object_or_404(Questions, id_test=t_id, id_ques=q_id)
 

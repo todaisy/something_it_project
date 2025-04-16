@@ -33,6 +33,6 @@ router.register(r'items', ListProfSerializerViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('TestForAbit.urls')),
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),  # /api
 
 ]

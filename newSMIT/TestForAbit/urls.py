@@ -3,7 +3,7 @@ from . import views
 
 
 urlpatterns = [
-    path('api/start-session/', views.start_test_session, name='start-session'),
+    path('', views.start_test_session, name='start-session'),
     path('api/question/<int:t_id>/<int:q_id>/', views.get_question, name='qwsts'),
     # path('api/save-answer/<int:t_id>/<int:q_id>/', views.save_answer)
     # ... другие URL ...

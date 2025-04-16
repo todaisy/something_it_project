@@ -17,7 +17,6 @@ class TestSession(models.Model):
         verbose_name="Дата создания"
     )
 
-    # Флаг завершения теста
     is_completed = models.BooleanField(
         default=False,
         verbose_name="Тест завершен"
@@ -93,7 +92,8 @@ class TestAnswers(models.Model):
 class Questions(models.Model):
     id_test = models.IntegerField(verbose_name="ID теста")
     id_ques = models.IntegerField(verbose_name="ID вопроса")
-    question_text = models.TextField(verbose_name="Текст вопроса")
+    # question_text = models.TextField(verbose_name="Текст вопроса")
+    id_group = models.IntegerField(null=True, blank=True)
     answer_text = models.TextField(verbose_name="Эталонный ответ")
 
     class Meta:
