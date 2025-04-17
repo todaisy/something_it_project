@@ -37,17 +37,30 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'TestForAbit.apps.TestForAbitConfig',
+    'rest_framework',
+    'corsheaders',
+    'backend_api',
+
+
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+
 ]
 
 ROOT_URLCONF = 'newSMIT.urls'
@@ -76,8 +89,15 @@ WSGI_APPLICATION = 'newSMIT.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'test_db',
+        'USER': 'admin_db',
+        'PASSWORD': 'RfYbjdienWE',
+        'HOST': '85.235.205.239',  # или IP, если база на удалённом сервере
+        'PORT': '5432',       # стандартный порт PostgreSQL
+        'OPTIONS': {
+            'sslmode': 'require',  # или 'disable', если вы не используете SSL
+        }
     }
 }
 
@@ -122,3 +142,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CORS_ALLOW_ALL_ORIGINS = True

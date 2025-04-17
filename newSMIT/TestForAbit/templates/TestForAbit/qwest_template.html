@@ -7,9 +7,9 @@
         <button type="submit">Отправить</button>
     </form>
     {% if q_id > 1%}
-        <a href = "{% url 'qwsts' last %}">Перейти к предыдущему вопросу</a>
+        <a href = "{% url 'qwsts' t_id last %}">Перейти к предыдущему вопросу</a>
     {% endif %}
     {% if q_id < last_q_id %}
-    <a href = "{% url 'qwsts' next %}">Перейти к следующему вопросу</a>
+    <a href = "{% url 'qwsts' t_id next %}">Перейти к следующему вопросу</a>
     {% endif %}
     {%endblock%}

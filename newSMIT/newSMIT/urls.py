@@ -17,8 +17,23 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.urls import include
+from rest_framework.routers import DefaultRouter
+from backend_api.views import (UserProgressSerializerViewSet, UserPassesSerializerViewSet,
+                               TestAnswersSerializerViewSet, QuestionsSerializerViewSet,
+                               WeightSerializerViewSet, ListProfSerializerViewSet)
+
+router = DefaultRouter()
+router.register(r'user-progress', UserProgressSerializerViewSet)
+router.register(r'user-passes', UserPassesSerializerViewSet)
+router.register(r'test-answers', TestAnswersSerializerViewSet)
+router.register(r'questions', QuestionsSerializerViewSet)
+router.register(r'weight', WeightSerializerViewSet)
+router.register(r'list-prof', ListProfSerializerViewSet)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('TestForAbit.urls'))
+    path('api/', include(router.urls)),  # Теперь API будет доступен по /api/
+    path('', include('TestForAbit.urls')),
 ]
+
