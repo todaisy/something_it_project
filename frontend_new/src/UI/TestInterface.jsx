@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
 const TestInterface = ({ sessionId, testId }) => {
     const [currentQues, setCurrentQues] = useState(1);
     const [questionData, setQuestionData] = useState(null);
@@ -12,27 +13,19 @@ const TestInterface = ({ sessionId, testId }) => {
         const loadQuestion = async () => {
             setIsLoading(true);
             try {
-                const response = await axios.get(
-                    `http://localhost:8000/api/question/${testId}/${currentQues}/`,
-                    {
-                        headers: {
-                            'X-Session-Id': sessionId
-                        }
-                    }
-                );
-
+                const response = await axios.get(`http://localhost:8000/api/question/${sessionId}/${testId}/${currentQues}/`);
                 setQuestionData(response.data);
-                setSelectedAnswer(response.data.current_answer || '');
+               setSelectedAnswer(response.data.current_answer || '');
                 setSubmitStatus('');
             } catch (error) {
                 console.error('Ошибка загрузки вопроса:', error);
                 setSubmitStatus('Ошибка загрузки вопроса');
             } finally {
                 setIsLoading(false);
-            }
+           }
         };
 
-        if (sessionId) {
+       if (sessionId) {
             loadQuestion();
         }
     }, [testId, currentQues, sessionId]);

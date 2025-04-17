@@ -1,59 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import TestInterface from './TestInterface';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react'; // Добавьте хуки
+import axios from 'axios'; // Импортируйте axios
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate
+} from 'react-router-dom';
+import TestInterfaceComponent from './TestInterface';
+import StartTest from './StartTest';
 
 function App() {
-    const { testId } = useParams(); // Получаем testId из URL
-    const [sessionId, setSessionId] = useState(localStorage.getItem('test_session') || null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-    useEffect(() => {
-        const initializeSession = async () => {
-            try {
-                if (!sessionId) {
-                    // Создаем новую сессию
-                    const response = await axios.post('http://127.0.0.1:8000/api/start-session/');
-                    const newSessionId = response.data.session_id;
-
-                    localStorage.setItem('test_session', newSessionId);
-                    setSessionId(newSessionId);
-                }
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        initializeSession();
-    }, [sessionId]);
-
-    if (loading) {
-        return <div>Инициализация теста...</div>;
-    }
-
-    if (error) {
-        return (
-            <div className="error">
-                <h2>Ошибка инициализации</h2>
-                <p>{error}</p>
-                <button onClick={() => window.location.reload()}>Повторить</button>
-            </div>
-        );
-    }
-
-    return (
-        <div className="App">
-            <h1>Система тестирования</h1>
-            {/* Передаем оба пропса: */}
-            <TestInterface
-                sessionId={sessionId}
-                testId={testId}
-            />
-        </div>
-    );
+  return (
+    <Router>
+      <div className="App">
+        <h1>Система тестирования</h1>
+        <Routes>
+          <Route path="/" element={<StartTest />} />
+          <Route
+            path="/test/:testId"
+            element={<ProtectedRoute><TestInterfaceComponent /></ProtectedRoute>}
+          />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
+// Компонент для проверки сессии
+const ProtectedRoute = ({ children }) => {
+  const [isValidSession, setIsValidSession] = useState(null); // Теперь useState определен
+  const sessionId = localStorage.getItem('test_session');
+
+  useEffect(() => { // Теперь useEffect определен
+    const verifySession = async () => {
+      try {
+        await axios.get(`http://localhost:8000/api/verify-session/${sessionId}/`);
+        setIsValidSession(true);
+      } catch (error) {
+        localStorage.removeItem('test_session');
+        setIsValidSession(false);
+      }
+    };
+
+    if (sessionId) verifySession();
+    else setIsValidSession(false);
+  }, []);
+
+  if (isValidSession === null) return <div>Проверка сессии...</div>;
+  return isValidSession ? children : <Navigate to="/" replace />;
+};
+
 export default App;
+
+
+
+/* <Route path="/contact" element={<Contact />} />
+ <Route path="/" element={<Home />} />
+ <Route path="/results" element={<Results />} />
+*/
