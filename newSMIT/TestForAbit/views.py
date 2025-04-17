@@ -9,34 +9,38 @@ from .models import TestSession
 
 @api_view(['POST'])
 def start_test_session(request):
-    # Создаем новую сессию
-    new_session = TestSession.objects.create()
+    try:
+        test_id = 1  # Или получить из запроса
+        new_session = TestSession.objects.create(test_id=test_id)
 
-    # Возвращаем клиенту session_id
-    return Response({
-        'session_id': str(new_session.session_id),
-        'created_at': new_session.created_at
-    })
+        return Response({
+            'session_id': str(new_session.session_id),
+            'created_at': new_session.created_at
+        }, status=201)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
 
 @api_view(['GET'])
-def get_question(request, t_id, q_id):
-    session_id = request.headers.get('X-Session-Id')
-    if not session_id:
-        return Response({"error": "Session ID required"}, status=400)
-
+def get_question(request, session_id, t_id, q_id):
     try:
         session = TestSession.objects.get(session_id=session_id)
     except TestSession.DoesNotExist:
-        return Response({"error": "Invalid session"}, status=400)
+        return Response({"error": "Invalid session"}, status=status.HTTP_404_NOT_FOUND)
 
-    # Получаем вопрос из базы данных
-    question = get_object_or_404(Questions, id_test=t_id, id_ques=q_id)
+    questions = Questions.objects.filter(id_test=t_id).order_by('id_ques')
 
-    # Получаем варианты ответов для этого вопроса
+    try:
+        question = questions[q_id - 1]  # Получаем вопрос по порядковому номеру
+    except IndexError:
+        return Response({"error": "Question not found"}, status=404)
+
     answer_options = TestAnswers.objects.filter(
+        session=session,
         id_test=t_id,
-        id_ques=q_id
-    ).order_by('id_answ')
+        id_ques=question.id_ques  # Используем реальный ID вопроса
+    )
 
     # Сериализуем данные
     question_serializer = QuestionSerializer(question)
@@ -61,4 +65,3 @@ def get_question(request, t_id, q_id):
     }
 
     return Response(response_data)
-

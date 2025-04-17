@@ -21,6 +21,11 @@ class TestSession(models.Model):
         default=False,
         verbose_name="Тест завершен"
     )
+    test = models.ForeignKey(
+        'Test',  # Укажите вашу модель тестов
+        on_delete=models.CASCADE,
+        null=True
+    )
 
     class Meta:
         verbose_name = "Сессия тестирования"
@@ -28,19 +33,6 @@ class TestSession(models.Model):
 
     def __str__(self):
         return f"Сессия {self.session_id} ({self.created_at})"
-
-'''  
-class TestSession(models.Model):
-    session_id = models.UUIDField(
-        primary_key=True,
-        default=uuid.uuid4,
-        editable=False,
-        verbose_name="ID сессии"
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_completed = models.BooleanField(default=False)
-'''
-
 
 class TestAnswers(models.Model):
     session = models.ForeignKey(
@@ -53,6 +45,7 @@ class TestAnswers(models.Model):
     id_answ = models.IntegerField()
     answer_text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         unique_together = ('session', 'id_test', 'id_ques', 'id_answ')
