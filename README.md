@@ -6,5 +6,5 @@ For launch: run "python manage.py runserver" in project directory
 
 Project will be launched on the server soon
 
-
+------------------------------------
 developed by something_it_group
